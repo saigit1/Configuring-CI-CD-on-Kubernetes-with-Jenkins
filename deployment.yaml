@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: podinfo-deployment
   labels:
-    app: podinfo
+    app: podinfo1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: podinfo
+      app: podinfo1
   template:
     metadata:
       labels:
-        app: podinfo
+        app: podinfo1
     spec:
       containers:
       - name: podinfo
