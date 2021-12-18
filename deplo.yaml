@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: m2psora2a1
+  name: m2psora2a1
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: m2psora2a1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: m2psora2a1
+    spec:
+      containers:
+      - env:
+        - name: SOR_JDBC_URL
+          value: jdbc:mysql://aks-mysqldb-uae.mysql.database.azure.com:3306/
+        - name: SOR_DB_NAME
+          value: SOR
+        - name: MAIN_JDBC_USERNAME
+          value: eksdemordssql@aks-mysqldb-uae
+        - name: MAIN_JDBC_PASS
+          value: QazXsw10#!EDC
+        - name: SOR_PORT
+          value: "9940"
+        - name: SPRING_BOOT_APPLICATION_MONITOR_URL
+        - name: MAX_FILE_SIZE
+          value: 10MB
+        - name: AZURE_CLIENT_ID
+          value: c642a71b-60ec-41d1-ab2f-dd89fb90ada2
+        - name: AZURE_CLIENT_SECRET
+          value: 7x8xX..-W8fQ1YD_VcXd12G8Zf-u6W1CAE
+        - name: AZURE_APP_ID
+          value: 14511f0b-c1c4-4075-9a02-efa1bc649d19
+        - name: M2PAUTH_URL
+          value: http://10.240.0.228:9966/uaa/
+        - name: SOR_BASE_URL
+          value: 10.240.0.226
+        image: m2pfintech01/icici_sor_uat:latest
+        imagePullPolicy: Always
+        name: m2psora2a1
+        ports:
+        - containerPort: 9940
+          name: http
+          protocol: TCP
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: true
+          runAsNonRoot: false
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: yapuaeaksdockerauth
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 3435
+        runAsGroup: 2546
+        runAsUser: 1534
+      terminationGracePeriodSeconds: 30
