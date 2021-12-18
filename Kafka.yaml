@@ -1,30 +1,36 @@
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: ka-file
-  namespace: default
-provisioner: kubernetes.io/azure-file
-mountOptions:
-  - dir_mode=0754
-  - file_mode=0754
-  - uid=1534
-  - gid=2546
-  - mfsymlinks
-  - cache=strict
-  - actimeo=30
-parameters:
-  skuName: Standard_LRS
-  
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: ka-file
-  namespace: default
+  name: zookeeper1
+  namespace: zoo
 spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName: ka-file
-  resources:
-    requests:
-      storage: 1Gi
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper1
+  template:
+    metadata:
+      labels:
+        app: zookeeper1
+    spec:
+      containers:
+      - name: zookeeper1
+        image: digitalwonderland/zookeeper
+        ports:
+        - containerPort: 2181
+        - containerPort: 2888
+        - containerPort: 3899
+        env:
+        - name: ZOOKEEPER_ID
+          value: "1"
+        - name: ZOOKEEPER_SERVER_1
+          value: zoo1
+        - name: ZOOKEEPER_SERVER_2
+          value: zoo2
+        volumeMounts:
+        - mountPath: /var/kafka
+          name: zoo-file
+      volumes:
+      - name: zoo-file
+        persistentVolumeClaim:
+          claimName: zoo-file      
