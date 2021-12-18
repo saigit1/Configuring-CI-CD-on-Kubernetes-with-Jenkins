@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
   labels:
     app: m2psora2a1
   name: m2psora2a1
@@ -17,6 +18,7 @@ spec:
     type: RollingUpdate
   template:
     metadata:
+      creationTimestamp: null
       labels:
         app: m2psora2a1
     spec:
