@@ -4,7 +4,7 @@ metadata:
   annotations:
   labels:
     app: m2psora2a1
-  name: m2psora2a1
+  name: default
   namespace: default
 spec:
   replicas: 1
