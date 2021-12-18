@@ -1,7 +1,7 @@
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
-  name: zoo1-file
+  name: ka-file
   namespace: default
 provisioner: kubernetes.io/azure-file
 mountOptions:
@@ -19,124 +19,12 @@ parameters:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: zoo1-file
+  name: ka-file
   namespace: default
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: zoo1-file
+  storageClassName: ka-file
   resources:
     requests:
       storage: 1Gi
----      
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: zookeeper1
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: zookeeper1
-  template:
-    metadata:
-      labels:
-        app: zookeeper1
-    spec:
-      containers:
-      - name: zookeeper1
-        image: digitalwonderland/zookeeper
-        ports:
-        - containerPort: 2181
-        - containerPort: 2888
-        - containerPort: 3888
-        env:
-        - name: ZOOKEEPER_ID
-          value: "1"
-        - name: ZOOKEEPER_SERVER_1
-          value: zoo1
-        - name: ZOOKEEPER_SERVER_2
-          value: zoo2
-        volumeMounts:
-        - mountPath: /var/zoo
-          name: zoo1-file
-      volumes:
-      - name: zoo1-file
-        persistentVolumeClaim:
-          claimName: zoo1-file      
----
-apiVersion: apps/v1
-kind: Deployment 
-metadata:
-  name: zookeeper2
-spec:
-  replicas: 1
-  selector:
-    matchLabels:      
-      app: zookeeper2
-  template:
-    metadata:
-      labels:
-        app: zookeeper2
-    spec:
-      containers:
-      - name: zookeeper2
-        image: digitalwonderland/zookeeper
-        ports:
-        - containerPort: 2181
-        - containerPort: 2888
-        - containerPort: 3888
-        env:
-        - name: ZOOKEEPER_ID
-          value: "2"
-        - name: ZOOKEEPER_SERVER_1
-          value: zoo1
-        - name: ZOOKEEPER_SERVER_2
-          value: zoo2
-        volumeMounts:
-        - mountPath: /var/zoo
-          name: zoo1-file
-      volumes:
-      - name: zoo1-file
-        persistentVolumeClaim:
-          claimName: zoo1-file
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: zoo1
-spec:
-  type: LoadBalancer
-  ports:
-  - name: port-2181
-    port: 2181
-    protocol: TCP 
-  - name: port-2888
-    port: 2888
-    protocol: TCP 
-  - name: port-3888
-    port: 3888
-    protocol: TCP 
-  selector:
-    app: zookeeper1
-
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: zoo2
-spec:
-  type: LoadBalancer
-  ports:
-  - name: port-2181
-    port: 2181
-    protocol: TCP 
-  - name: port-2888
-    port: 2888
-    protocol: TCP 
-  - name: port-3888
-    port: 3888
-    protocol: TCP 
-  selector:
-    app: zookeeper2
----
