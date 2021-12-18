@@ -19,7 +19,7 @@ spec:
         ports:
         - containerPort: 2181
         - containerPort: 2888
-        - containerPort: 3899
+        - containerPort: 3888
         env:
         - name: ZOOKEEPER_ID
           value: "1"
